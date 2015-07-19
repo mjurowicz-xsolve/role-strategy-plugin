@@ -1,0 +1,19 @@
+.table-scrollable-wrapper {
+  position: relative;
+  overflow: auto;
+  max-height: 500px;
+  max-width: 100%;
+}
+
+.table-scrollable-header,
+.table-scrollable-intersect,
+.table-scrollable-first-col {
+  background-color: #fff;
+  position: absolute;
+  table-layout: auto;
+  top: 0;
+}
+
+.table-scrollable-first-col {
+  left: 0;
+}
