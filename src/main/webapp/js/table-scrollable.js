@@ -57,18 +57,26 @@ document.observe("dom:loaded", function () {
 
       this.intersect.update();
       this.header.writeAttribute('width', ( this.tableScrollable.getWidth() + 2 ) + 'px');
-      this.header.select('.scrollable-header-cell').each(function (element) {
-          element.setStyle({
-            'width': self.headerCells[i].getWidth() + 'px',
-            'height': self.headerCells[i].getHeight() + 'px'
-          });
+      this.header.select('tr').each(function(trElement) {
+        var intersectTr = new Element('tr');
 
-          if (element.hasClassName('scrollable-first-col')) {
-            self.intersect.insert(element.clone(true));
-          }
+        trElement.select('.scrollable-header-cell').each(function (element) {
+            element.setStyle({
+              'width': self.headerCells[i].getWidth() + 'px',
+              'height': self.headerCells[i].getHeight() + 'px'
+            });
 
-          i++;
+            if (element.hasClassName('scrollable-first-col')) {
+              intersectTr.insert(element.clone(true));
+            }
+
+            i++;
+        });
+
+        self.intersect.insert(intersectTr);
       });
+
+      this.intersectCellsCount = this.intersect.select('tr:first-child .scrollable-first-col.scrollable-header-cell').length;
     }
 
     function createFirstCol() {
@@ -111,13 +119,10 @@ document.observe("dom:loaded", function () {
     }
 
     function bindEvents() {
-      this.tableScrollable.up('form').on('click', 'button', function(e) {
-        reinitTableScrollable.call(self);
-      });
-
-      this.tableScrollable.on('click', '.scrollable-bind-click', function(e) {
-        reinitTableScrollable.call(self);
-      });
+      this.tableScrollable.up('form').on('click', 'button', reinitTableScrollable.bind(self));
+      this.tableScrollable.on('click', '.scrollable-bind-click', reinitTableScrollable.bind(self));
+      this.tableScrollable.on('mouseover', 'td input', highlight.bind(self));
+      this.tableScrollable.on('mouseout', 'td input', highlight.bind(self));
     }
 
     function reinitTableScrollable() {
@@ -125,6 +130,15 @@ document.observe("dom:loaded", function () {
         setHeaderWithIntersectCellsSize.call(self);
         appendFirstColRows.call(self);
       }, 1);
+    }
+
+    function highlight(e) {
+      var td = Event.element(e).parentNode;
+      var trPosition = td.parentNode.previousSiblings().length;
+      var position = td.previousSiblings().length - this.intersectCellsCount;
+
+      this.header.select('tr').last().childElements()[position].toggleClassName('highlighted');
+      this.firstCol.childElements()[trPosition].toggleClassName('highlighted');
     }
 
     return {
