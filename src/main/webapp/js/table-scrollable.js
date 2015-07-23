@@ -56,7 +56,7 @@ document.observe("dom:loaded", function () {
       i = 0;
 
       this.intersect.update();
-      this.header.writeAttribute('width', ( this.tableScrollable.getWidth() + 2 ) + 'px');
+      this.header.writeAttribute('width', this.tableScrollable.getWidth() + 'px');
       this.header.select('tr').each(function(trElement) {
         var intersectTr = new Element('tr');
 
@@ -134,10 +134,14 @@ document.observe("dom:loaded", function () {
 
     function highlight(e) {
       var td = Event.element(e).parentNode;
-      var trPosition = td.parentNode.previousSiblings().length;
-      var position = td.previousSiblings().length - this.intersectCellsCount;
+      var tr = td.parentNode;
+      var trPosition = tr.previousSiblings().length;
+      var position = td.previousSiblings().length;
+      var headTrs = this.header.select('tr');
+      var headLastTr = headTrs.last();
+      var headetrCellsDifference = headTrs.first().select('.scrollable-first-col[rowspan]').length || 0;
 
-      this.header.select('tr').last().childElements()[position].toggleClassName('highlighted');
+      headLastTr.childElements()[position - headetrCellsDifference].toggleClassName('highlighted');
       this.firstCol.childElements()[trPosition].toggleClassName('highlighted');
     }
 

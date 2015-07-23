@@ -50,7 +50,7 @@
               </td>
               <td class="left-most scrollable-first-col">${title}</td>
               <j:if test="${!attrs.global}">
-                <td width="*" class="in-place-edit">
+                <td width="*" class="in-place-edit scrollable-first-col">
                   ${h.escape(attrs.role.pattern.toString())}
                   <input type="hidden" name="[pattern]" value="${attrs.role.pattern}" />
                 </td>
