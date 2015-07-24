@@ -17,3 +17,8 @@
 .table-scrollable-first-col {
   left: 0;
 }
+
+.permission-row td {
+  height: 24px;
+  overflow: hidden;
+}

@@ -55,7 +55,7 @@
         <td rowspan="2" class="stop scrollable-header-cell" />
       </tr>
       <!-- The second row for individual permission -->
-      <tr class="caption-row scrollable-header-row">
+      <tr class="caption-row scrollable-header-row scrollable-highlightable-row">
         <j:forEach var="g" items="${slaveGroups}">
           <j:forEach var="p" items="${g.permissions}">
             <j:if test="${it.strategy.descriptor.showPermission(it.strategy.SLAVE, p)}">

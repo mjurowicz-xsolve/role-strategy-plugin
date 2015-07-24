@@ -46,6 +46,8 @@ document.observe("dom:loaded", function () {
         self.header.insert(row.clone(true));
       });
 
+      this.header.insert(new Element('tr'));
+
       setHeaderWithIntersectCellsSize.call(this);
 
       this.tableScrollable.insert({ after: this.header });
@@ -55,18 +57,18 @@ document.observe("dom:loaded", function () {
     function setHeaderWithIntersectCellsSize() {
       i = 0;
 
+      var width = this.header.getWidth();
+
       this.intersect.update();
-      this.header.writeAttribute('width', this.tableScrollable.getWidth() + 'px');
+      this.header.writeAttribute('width', (this.tableScrollable.getWidth() || width) + 'px');
       this.header.select('tr').each(function(trElement) {
         var intersectTr = new Element('tr');
 
         trElement.select('.scrollable-header-cell').each(function (element) {
-            element.setStyle({
-              'width': self.headerCells[i].getWidth() + 'px',
-              'height': self.headerCells[i].getHeight() + 'px'
-            });
+            element.writeAttribute('width', self.headerCells[i].getWidth() + 'px');
 
             if (element.hasClassName('scrollable-first-col')) {
+              element.writeAttribute('height', self.headerCells[i].getHeight() + 'px');
               intersectTr.insert(element.clone(true));
             }
 
@@ -82,7 +84,6 @@ document.observe("dom:loaded", function () {
     function createFirstCol() {
       this.firstCol = new Element('table', { class: 'table-scrollable-first-col'});
       this.firstCol.addClassName(this.tableClassNames);
-
       this.tableScrollable.insert({ before: this.firstCol });
 
       appendFirstColRows.call(this);
@@ -99,8 +100,10 @@ document.observe("dom:loaded", function () {
         var newRow = new Element('tr');
 
         firstColCells.each(function(element) {
-          var clone = element.clone(true).setStyle({ 'height': element.getHeight() + 'px' });
+          var clone;
+          var elementHeight = Math.ceil(element.getHeight());
 
+          clone = element.clone(true).setStyle({ 'height': elementHeight + 'px' });
           newRow.insert(clone);
 
           if (!clone.down('.scrollable-bind-click')) {
@@ -116,6 +119,8 @@ document.observe("dom:loaded", function () {
 
         self.firstCol.insert(newRow);
       });
+
+      this.intersect.writeAttribute('width', this.firstCol.getWidth());
     }
 
     function bindEvents() {
@@ -138,10 +143,10 @@ document.observe("dom:loaded", function () {
       var trPosition = tr.previousSiblings().length;
       var position = td.previousSiblings().length;
       var headTrs = this.header.select('tr');
-      var headLastTr = headTrs.last();
+      var headHighlightableRow = this.header.select('.scrollable-highlightable-row').first();
       var headetrCellsDifference = headTrs.first().select('.scrollable-first-col[rowspan]').length || 0;
 
-      headLastTr.childElements()[position - headetrCellsDifference].toggleClassName('highlighted');
+      headHighlightableRow.childElements()[position - headetrCellsDifference].toggleClassName('highlighted');
       this.firstCol.childElements()[trPosition].toggleClassName('highlighted');
     }
 
