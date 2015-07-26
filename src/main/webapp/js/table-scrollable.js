@@ -126,6 +126,10 @@ document.observe("dom:loaded", function () {
     function bindEvents() {
       this.tableScrollable.up('form').on('click', 'button', reinitTableScrollable.bind(self));
       this.tableScrollable.on('click', '.scrollable-bind-click', reinitTableScrollable.bind(self));
+
+      layoutUpdateCallback && layoutUpdateCallback.add ?
+        layoutUpdateCallback.add(reinitTableScrollable.bind(self)) : null;
+
       this.tableScrollable.on('mouseover', 'td input', highlight.bind(self));
       this.tableScrollable.on('mouseout', 'td input', highlight.bind(self));
     }
